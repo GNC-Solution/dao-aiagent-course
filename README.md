@@ -1,4 +1,4 @@
-# GNC SOLUTION : AI AGENT BUILDING COURSE
+# AI AGENT BUILDING COURSE
 
 ## AI에이전트 기반 비즈니스전환 제안
 https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive_link
@@ -18,6 +18,9 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 • 깃허브 계정
 
 • Telegram 계정
+
+
+
 
 ## 문서
 • OpenClaw 튜토리얼 공식문서 (https://docs.openclaw.ai/)
