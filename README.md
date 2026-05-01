@@ -28,6 +28,14 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 • Claude Code 사용법 공식문서 (https://code.claude.com/docs)
 
 
+## 3단계 구축 전략
+|단계|내용|설명|
+|------|---|---|
+|1. AI에이전트 실습|2일간 실습교육|준비물 있음|
+|2. AI에이전트 구축|3개월간 구축|(고객) AI트레이너 담당|
+|3. AI에이전트 운영|운영 (월 구독)|실운영지원|
+
+
 # 교육과정
 
 <img width="450" height="300" alt="image" src="https://github.com/user-attachments/assets/ca1ffc30-1725-4a26-b857-62cf67c5e508" />
