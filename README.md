@@ -10,7 +10,9 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 ### Note
 • 개인은 몇 개의 에이전트를 데라고 살아가게 됩니다<br>
 • 능력이 뛰어나고 24시간 일하는 어린아이를 키워가는 것입니다.<br>
-• 게인과 조직의 일하는 방식의 전환입니다.<br><br><br>
+• 개인과 조직의 일하는 방식의 전환입니다.<br>
+• 에이전트들이 실시간으로 연결되어 상호 규칙(Protocol)에 따라 Token(스테이블 코인 등)을 주고 받으며 새로운 프로토콜 사회를 형성합니다.
+<br><br><br>
 
 ## 준비 및 확인사항
 
