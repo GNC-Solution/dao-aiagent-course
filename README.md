@@ -27,7 +27,7 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 
 # 교육과정
 
-<img width="600" height="400" alt="image" src="https://github.com/user-attachments/assets/ca1ffc30-1725-4a26-b857-62cf67c5e508" />
+<img width="450" height="300" alt="image" src="https://github.com/user-attachments/assets/ca1ffc30-1725-4a26-b857-62cf67c5e508" />
 
 (선택과정) 크립토카드 생성
 
