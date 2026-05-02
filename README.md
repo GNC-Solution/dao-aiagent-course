@@ -19,24 +19,6 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 <img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/3a52a1d5-3fa9-4da5-af26-bb8e88ba8358" />
 <br><br><br>
 
-## 준비 및 확인사항
-
-### 경험
-• ChatGPT, Gemini, Grok, Deepseek 사용경험
-
-• Claude, OpenClaw 사용경험  <br><br><br>
-
-### 준비물
-• 컴퓨터 (저사양 가능)
-
-• 구글 Gemini 계정
-
-• 깃허브 계정
-
-• Telegram 계정  <br><br><br>
-
-
-
 
 ## 문서
 • OpenClaw 튜토리얼 공식문서 (https://docs.openclaw.ai/)
@@ -58,6 +40,24 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 <img width="450" height="300" alt="image" src="https://github.com/user-attachments/assets/ca1ffc30-1725-4a26-b857-62cf67c5e508" />
 
 (선택과정) 크립토카드 생성<br><br><br>
+
+## 준비 및 확인사항
+
+### 경험
+• ChatGPT, Gemini, Grok, Deepseek 사용경험
+
+• Claude, OpenClaw 사용경험  <br><br><br>
+
+### 준비물
+• 컴퓨터 (저사양 가능)
+
+• 구글 Gemini 계정
+
+• 깃허브 계정
+
+• Telegram 계정  <br><br><br>
+
+
 
 
 # Ⅲ. 적용영역 및 사례
