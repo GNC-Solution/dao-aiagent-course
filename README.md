@@ -1,4 +1,4 @@
-# Ⅰ. AI AGENT BUILDING COURSE
+# Ⅰ. AI AGENT 구축 제안
 
 ## AI에이전트 기반 비즈니스전환 제안
 https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive_link  <br><br><br>
