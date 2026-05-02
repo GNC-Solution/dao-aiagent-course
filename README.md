@@ -3,6 +3,7 @@
 ## AI에이전트 기반 비즈니스전환 제안
 https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive_link  <br><br><br>
 
+https://medium.com/@bipasori/openclaw-ai-agent%EB%A1%9C-24-7-%EB%AA%A9%ED%91%9C%EB%A5%BC-%ED%96%A5%ED%95%B4-%EC%8A%A4%EC%8A%A4%EB%A1%9C-%EC%9B%80%EC%A7%81%EC%9D%B4%EB%8A%94-%EA%B3%B5%EC%9E%A5-f802bfc90d31?postPublishedType=repub
 
 ## AI에이전트의 시대입니다. 중요하고 수익이 발생하는 일들을 에이전트로 전환하세요. 
 ## 지금 당장. 하지 많으면 도태 됩니다.
