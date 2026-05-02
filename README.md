@@ -29,19 +29,17 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 # Ⅱ. 3단계 구축 전략
 |단계|내용|설명|
 |------|---|---|
-|1. AI에이전트 실습|2일간 실습교육|준비물 있음|
-|2. AI에이전트 구축|3개월간 구축|(고객) AI트레이너 담당|
-|3. AI에이전트 운영|운영 (월 구독)|실운영지원|
+|1단계. AI에이전트 실습|2일간 실습교육|준비물 있음|
+|2단계. AI에이전트 구축|3개월간 구축|(고객) AI트레이너 담당|
+|3단계. AI에이전트 운영|운영 (월 구독)|실운영지원|
 
   <br><br><br>
   
-## AI에이전트 실습 - 교육과정
+## 1단계: AI에이전트 실습 - 교육과정
 
 <img width="450" height="300" alt="image" src="https://github.com/user-attachments/assets/ca1ffc30-1725-4a26-b857-62cf67c5e508" />
 
 (선택과정) 크립토카드 생성<br><br><br>
-
-## 준비 및 확인사항
 
 ### 경험
 • ChatGPT, Gemini, Grok, Deepseek 사용경험
@@ -58,6 +56,11 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 • Telegram 계정  <br><br><br>
 
 
+### 문의 및 신청
+• bipasori@gmail.com
+
+• 010-8226-7470 (문자로 문의해 주세요)
+ <br><br><br>
 
 
 # Ⅲ. 적용영역 및 사례
