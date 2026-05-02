@@ -14,6 +14,11 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 • 에이전트들이 실시간으로 연결되어 상호 규칙(Protocol)에 따라 Token(스테이블 코인 등)을 주고 받으며 새로운 프로토콜 사회를 형성합니다.
 <br><br><br>
 
+### Human's rule society to Protocol Society
+
+<img width="600" height="865" alt="image" src="https://github.com/user-attachments/assets/392d3b5c-f435-4c48-9c57-881de5ab3bd6" />
+<br><br><br>
+
 ## 준비 및 확인사항
 
 ### 경험
