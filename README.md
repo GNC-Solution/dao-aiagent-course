@@ -26,6 +26,12 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 • Claude Code 사용법 공식문서 (https://code.claude.com/docs)  <br><br><br>
 
 
+### 경험
+• ChatGPT, Gemini, Grok, Deepseek 사용경험
+
+• Claude, OpenClaw 사용경험  <br><br><br>
+
+
 # Ⅱ. 3단계 구축 전략
 |단계|내용|설명|
 |------|---|---|
@@ -41,10 +47,10 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 
 (선택과정) 크립토카드 생성<br><br><br>
 
-### 경험
-• ChatGPT, Gemini, Grok, Deepseek 사용경험
+### 내용
+• 장소 : 서울 송파구
 
-• Claude, OpenClaw 사용경험  <br><br><br>
+• 비용 : 100만원  <br><br><br>
 
 ### 준비물
 • 컴퓨터 (저사양 가능)
@@ -53,8 +59,9 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 
 • 깃허브 계정
 
-• Telegram 계정  <br><br><br>
+• Telegram 계정  
 
+• (선택) 신분증과 10 USDT : 크립토카드 생성용  <br><br><br>
 
 ### 문의 및 신청
 • bipasori@gmail.com
