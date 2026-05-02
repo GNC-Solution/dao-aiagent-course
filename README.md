@@ -1,4 +1,4 @@
-# AI AGENT BUILDING COURSE
+# Ⅰ. AI AGENT BUILDING COURSE
 
 ## AI에이전트 기반 비즈니스전환 제안
 https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive_link  <br><br><br>
@@ -44,7 +44,7 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 • Claude Code 사용법 공식문서 (https://code.claude.com/docs)  <br><br><br>
 
 
-# 3단계 구축 전략
+# Ⅱ. 3단계 구축 전략
 |단계|내용|설명|
 |------|---|---|
 |1. AI에이전트 실습|2일간 실습교육|준비물 있음|
@@ -57,6 +57,19 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 
 <img width="450" height="300" alt="image" src="https://github.com/user-attachments/assets/ca1ffc30-1725-4a26-b857-62cf67c5e508" />
 
-(선택과정) 크립토카드 생성
+(선택과정) 크립토카드 생성<br><br><br>
 
 
+# Ⅲ. 적용영역 및 사례
+
+## 공공영역
+
+• 국가 단위의 인류사회는 한계를 보이고 있습니다. 국가와 Web3.0형 지역이 공조하는 사회로 전환이 시작되었습니다.<br>
+• Web3.0 지역경제사회를 구축해 보세요.<br><br>
+
+<img width="600" height="400" alt="지역경제" src="https://github.com/user-attachments/assets/dd0cbc9a-1159-4383-a7e4-34c2c22bcedb" />
+<br><br><br>
+
+## 영리조직 (제조)
+
+• 수익을 추구하는 영리조직의 에이전트화
