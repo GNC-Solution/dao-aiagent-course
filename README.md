@@ -79,6 +79,6 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 • 블록체인 기반 공급망 (추적성)<br>
 • IoT 센서 → MES 실시간 연동<br><br>
 
-<img width="800" height="430" alt="image" src="https://github.com/user-attachments/assets/86f1d523-eade-4194-bae2-0de1fe9d3513" />
+<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/86f1d523-eade-4194-bae2-0de1fe9d3513" />
 
 <br><br><br>
