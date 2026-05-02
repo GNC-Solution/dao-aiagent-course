@@ -16,7 +16,7 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 
 ### Human's rule society to Protocol Society
 
-<img width="600" height="865" alt="image" src="https://github.com/user-attachments/assets/392d3b5c-f435-4c48-9c57-881de5ab3bd6" />
+<img width="600" height="300" alt="image" src="https://github.com/user-attachments/assets/392d3b5c-f435-4c48-9c57-881de5ab3bd6" />
 <br><br><br>
 
 ## 준비 및 확인사항
