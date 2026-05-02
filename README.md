@@ -1,4 +1,4 @@
-<img width="128" height="123" alt="image" src="https://github.com/user-attachments/assets/820b8753-dbd3-4e26-8859-c0bd78d773bd" /># Ⅰ. AI AGENT 구축 제안
+# Ⅰ. AI AGENT 구축 제안
 
 ## AI에이전트 기반 비즈니스전환 제안
 https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive_link  <br><br><br>
