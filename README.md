@@ -103,7 +103,7 @@ https://medium.com/@bipasori/openclaw-ai-agent%EB%A1%9C-24-7-%EB%AA%A9%ED%91%9C%
 
 
 
-# Reference
+# ※ Reference
 ###OpenClaude Portable: USB에서 바로 실행하는, 7개 LLM 제공자를 지원하는 휴대용 코딩 에이전트<br>
 ###OpenClaude Portable: A portable coding agent that runs directly from USB and supports 7 LLM providers
 https://discuss.pytorch.kr/t/openclaude-portable-usb-7-llm/10091/1
