@@ -93,6 +93,14 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 
 <br><br><br>
 
+# Reference
+OpenClaude Portable: USB에서 바로 실행하는, 7개 LLM 제공자를 지원하는 휴대용 코딩 에이전트<br>
+OpenClaude Portable: A portable coding agent that runs directly from USB and supports 7 LLM providers
+https://discuss.pytorch.kr/t/openclaude-portable-usb-7-llm/10091/1
+<br><br><br>
+
+
+
 
 
 # Ⅳ. 관련글 및 기사
