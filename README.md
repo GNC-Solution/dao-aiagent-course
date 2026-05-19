@@ -23,7 +23,11 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 ## 문서
 • OpenClaw 튜토리얼 공식문서 (https://docs.openclaw.ai/)
 
-• Claude Code 사용법 공식문서 (https://code.claude.com/docs)  <br><br><br>
+• Claude Code 사용법 공식문서 (https://code.claude.com/docs) 
+
+• Genspark AI workspace (https://www.genspark.ai/blog/genspark-ai-workspace-4)
+
+• Hermes Agent (https://wikidocs.net/book/19414)  <br><br><br>
 
 
 ### 경험
