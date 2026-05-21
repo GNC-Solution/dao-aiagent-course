@@ -112,6 +112,10 @@ https://medium.com/@bipasori/openclaw-ai-agent%EB%A1%9C-24-7-%EB%AA%A9%ED%91%9C%
 ### OpenClaude Portable: A portable coding agent that runs directly from USB and supports 7 LLM providers
 https://discuss.pytorch.kr/t/openclaude-portable-usb-7-llm/10091/1
 <br><br><br>
+### 오픈클로(OpenClaw) 활용법: 매일 오전 공시분석 보고서 이메일로 받기 | 클라우드타입<br>
+https://www.youtube.com/watch?v=BkuCh87ebnA
+<br><br><br>
+
 
 
 
