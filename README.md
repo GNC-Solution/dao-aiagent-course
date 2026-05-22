@@ -115,6 +115,9 @@ https://discuss.pytorch.kr/t/openclaude-portable-usb-7-llm/10091/1
 ### 오픈클로(OpenClaw) 활용법: 매일 오전 공시분석 보고서 이메일로 받기 | 클라우드타입<br>
 https://www.youtube.com/watch?v=BkuCh87ebnA
 <br><br><br>
+### 토스 PO 출신 대표가 사내 ERP와 AI 에이전트를 직접 만들고 AI 네이티브 컴퍼니로 거듭난 방법 (윤용승 대표, 윤자동)<br>
+https://www.youtube.com/watch?v=CVmbidt-3ro
+<br><br><br>
 
 
 
