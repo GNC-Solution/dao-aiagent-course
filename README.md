@@ -119,7 +119,8 @@ https://www.youtube.com/watch?v=BkuCh87ebnA
 https://www.youtube.com/watch?v=CVmbidt-3ro
 <br><br><br>
 
-
-
+### NanoClaw - 500줄로 만든 개인용 AI 어시스턴트 <br>
+https://wikidocs.net/331652
+<br><br><br>
 
 
