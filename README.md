@@ -27,7 +27,10 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 
 • Genspark AI workspace (https://www.genspark.ai/blog/genspark-ai-workspace-4)
 
-• Hermes Agent (https://wikidocs.net/book/19414)  <br><br><br>
+• Hermes Agent (https://wikidocs.net/book/19414)  
+
+• NanoClaw - Secure AI Agent for WhatsApp, Telegram & More (https://nanoclaw.dev/)  <br><br><br>
+
 
 
 ### 경험
