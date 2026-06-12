@@ -29,6 +29,8 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 
 • Hermes Agent (https://wikidocs.net/book/19414)  
 
+• Hermes Agent (https://hermes-agent.nousresearch.com/docs)
+
 • NanoClaw - Secure AI Agent for WhatsApp, Telegram & More (https://nanoclaw.dev/)  <br><br><br>
 
 
@@ -128,4 +130,8 @@ https://wikidocs.net/331652
 
 ### We Let Genspark Claw Run Our Company For a Day 🦞
 https://www.youtube.com/watch?v=8r8xE-UmLTY
+<br><br><br>
+
+### Hermes Agent: 성장하는 AI 에이전트 실전 가이드
+https://wikidocs.net/book/19414
 <br><br><br>
