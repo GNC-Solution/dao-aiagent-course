@@ -1,3 +1,41 @@
+# Periodically read Kraken stocks and save any unavailable ones
+# Read and save prices every minute; if unavailable, save at the previous price and volume = 0
+# 주기적으로 크라켄 종목을 읽어서 없는 종목은 저장
+# 가격을 1분마다 읽어서 저장, 없으면 이전 가격으로 저장하고 volume = 0
+# 
+# Django model.py
+#
+# class ATMSymbolKraken(models.Model):
+#     service = models.ForeignKey(ATMService, on_delete=models.DO_NOTHING)
+#     symbol = models.CharField(db_column="symbol", max_length=255)
+#     symbol_call = models.CharField(db_column="symbol_call", max_length=255, default='')
+#     auto_flag = models.CharField(db_column="auto_flag", max_length=10, default='0')
+#     tr_price = models.DecimalField(max_digits=31, decimal_places=18, default=0)
+#     tr_qty = models.DecimalField(max_digits=31, decimal_places=18, default=0)
+#     tr_time = models.BigIntegerField(db_column="tr_time", default=0)
+#     deleted_flag = models.BooleanField(default=False, verbose_name='사용여부')
+
+#     class Meta:
+#         db_table = "atm_symbol_kraken"
+
+# class ADHHistoryKraken(models.Model):
+#     symbol = models.CharField(db_column="symbol", max_length=255)
+#     interval = models.CharField(db_column="interval", max_length=20, default='5m')
+#     tmestamp = models.BigIntegerField(db_column="tmestamp")
+#     openPrice = models.DecimalField(max_digits=31, decimal_places=18, default=0)
+#     closePrice = models.DecimalField(max_digits=31, decimal_places=18, default=0)
+#     highPrice = models.DecimalField(max_digits=31, decimal_places=18, default=0)
+#     lowPrice = models.DecimalField(max_digits=31, decimal_places=18, default=0)
+#     volume = models.DecimalField(max_digits=31, decimal_places=18, default=0)
+#     status = models.CharField(db_column="status", max_length=20, default='')
+
+#     class Meta:
+#         db_table = "adh_history_kraken"
+#         indexes = [
+#             models.Index(fields=['symbol', 'tmestamp'], name='symbol_kraken_tmestamp_asc_idx')
+#         ]
+# 
+
 import os
 import sys
 
