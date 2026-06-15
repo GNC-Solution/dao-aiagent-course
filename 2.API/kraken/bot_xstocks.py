@@ -77,6 +77,7 @@ from logging.handlers import TimedRotatingFileHandler
 import inspect
 import math
 
+# Initialize Global Logger
 # Global Logger 초기화
 logger = logging.getLogger('kraken_xstocks')
 
@@ -133,6 +134,7 @@ class XStocksCache:
 
 
 # ============================================================
+# 🔹 Django ORM Asynchronous-Safe Wrapper Function Layer
 # 🔹 Django ORM 비동기 안전 래퍼 함수 레이어
 # ============================================================
 @sync_to_async
@@ -283,14 +285,17 @@ def kraken_xstocks_symbol_sync():
 
 '''
 # ============================================================
+# 🕒 Asynchronous Daemon Control Loop Part
 # 🕒 비동기 데몬 제어 루프 파트
 # ============================================================
 async def daily_batch_daemon_loop():
     """
+    A resident daemon loop that perfectly synchronizes the asset table at a fixed time every morning.
     매일 새벽 정해진 시간대에 자산 테이블을 완벽히 동기화하는 상주형 데몬 루프.
     """
     logger = setup_main_logger()
-    logger.info("🚀 데일리 자산 배치 데몬 루프가 메모리에 적재되었습니다.")
+    logger.info("🚀 The daily asset placement daemon loop has been loaded into memory.")
+    #logger.info("🚀 데일리 자산 배치 데몬 루프가 메모리에 적재되었습니다.")
     
     loop = asyncio.get_running_loop()
     await loop.run_in_executor(None, kraken_xstocks_symbol_sync)
@@ -303,11 +308,13 @@ async def daily_batch_daemon_loop():
             next_run += timedelta(days=1)
 
         sleep_seconds = (next_run - now).total_seconds()
-        logger.info("💤 다음 신규 상장 조사 배치까지 대기 모드 진입: [%d초 남음] (목표 시간: %s)", int(sleep_seconds), next_run)
+        logger.info("💤 Entering sleep mode until next new listing investigation batch: [%d seconds remaining] (Target time: %s)", int(sleep_seconds), next_run)
+        #logger.info("💤 다음 신규 상장 조사 배치까지 대기 모드 진입: [%d초 남음] (목표 시간: %s)", int(sleep_seconds), next_run)
 
         await asyncio.sleep(sleep_seconds)
 
-        logger.info("⏰ 정각 스케줄 타임 도달. Kraken API 검사를 재개합니다.")
+        logger.info("⏰ Scheduled time reached on time. Resuming Kraken API check.")
+        #logger.info("⏰ 정각 스케줄 타임 도달. Kraken API 검사를 재개합니다.")
         await loop.run_in_executor(None, kraken_xstocks_symbol_sync)
 '''
 def daily_batch_daemon_loop_thread():
@@ -320,7 +327,8 @@ def daily_batch_daemon_loop_thread():
     logger = setup_main_logger()
     logger.info("🚀 The daily asset placement daemon has been isolated and loaded as an independent thread.")
     #logger.info("🚀 데일리 자산 배치 데몬이 독립 스레드(Thread)로 격리 적재되었습니다.")
-    
+
+    # First time execution
     # 최초 1회 실행
     kraken_xstocks_symbol_sync()
 
