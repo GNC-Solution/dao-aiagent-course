@@ -2,7 +2,7 @@
 # Read and save prices every minute; if unavailable, save at the previous price and volume = 0
 # 주기적으로 크라켄 종목을 읽어서 없는 종목은 저장
 # 가격을 1분마다 읽어서 저장, 없으면 이전 가격으로 저장하고 volume = 0
-# 
+#
 # Django model.py
 #
 # class ATMSymbolKraken(models.Model):
@@ -34,13 +34,15 @@
 #         indexes = [
 #             models.Index(fields=['symbol', 'tmestamp'], name='symbol_kraken_tmestamp_asc_idx')
 #         ]
-# 
+#
 
 import os
 import sys
 
 def setup_django_if_needed():
     """
+    gunicorn / manage.py environment: settings already loaded → do nothing
+    Run directly in terminal: settings loaded + django.setup()
     gunicorn / manage.py 환경: 이미 settings 로딩됨 → 아무것도 안 함
     terminal 직접 실행: settings 로딩 + django.setup()
     """
@@ -56,12 +58,15 @@ def setup_django_if_needed():
 setup_django_if_needed()
 
 from django.conf import settings
-from django.db import transaction
+from django import db
+from django.db import transaction, DatabaseError, OperationalError, IntegrityError
 from system_manage.models import ATMService, ATMSymbolKraken, ADHHistoryKraken
 from asgiref.sync import sync_to_async
 
 import signal
 import asyncio
+import threading
+
 from datetime import datetime, timedelta
 import json
 import traceback
@@ -99,6 +104,7 @@ def setup_main_logger():
 
 
 # ============================================================
+# 💾 [Singleton] Global Memory Cache Manager (Minimizes DB Load)
 # 💾 [싱글톤] 전역 메모리 캐시 매니저 (DB 부하 최소화)
 # ============================================================
 class XStocksCache:
@@ -107,12 +113,15 @@ class XStocksCache:
 
     @classmethod
     def initialize(cls, main_logger):
+        """For the first time, all registered symbols from the DB are cached by keeping them resident in memory."""
         """최초 1회 DB에서 전체 등록 심볼을 메모리에 상주시켜 캐싱합니다."""
         if not cls._is_initialized:
-            main_logger.info("[XStocksCache] DB 자산 목록을 최초 1회 메모리에 캐싱 진행 중...")
+            main_logger.info("[XStocksCache] Caching DB asset list in memory for the first time...")
+            #main_logger.info("[XStocksCache] DB 자산 목록을 최초 1회 메모리에 캐싱 진행 중...")
             cls._cached_symbols = set(ATMSymbolKraken.objects.values_list('symbol', flat=True))
             cls._is_initialized = True
-            main_logger.info("[XStocksCache] 캐싱 완료. 총 %d 개의 심볼이 보관됨.", len(cls._cached_symbols))
+            main_logger.info("[XStocksCache] Caching complete. A total of %d symbols are stored.", len(cls._cached_symbols))
+            #main_logger.info("[XStocksCache] 캐싱 완료. 총 %d 개의 심볼이 보관됨.", len(cls._cached_symbols))
 
     @classmethod
     def has_symbol(cls, symbol: str) -> bool:
@@ -128,29 +137,36 @@ class XStocksCache:
 # ============================================================
 @sync_to_async
 def get_active_kraken_symbols():
+    """Retrieve the list of collectible symbols from the DB where auto_flag is 1."""
     """DB에서 auto_flag가 1인 수집 대상 심볼 목록을 가져옵니다."""
     return list(ATMSymbolKraken.objects.filter(auto_flag="1").values_list('symbol', 'symbol_call'))
 
 @sync_to_async
 def insert_candle_to_db(symbol: str, interval: str, timestamp_raw: str, c_open, c_high, c_low, c_close, c_volume):
     """
+    🎯 [New] Loads data into the gnc_api_defi.adh_history_kraken table.
+    Stores a Kraken timestamp string ('2026-06-11T07:01:00.000000Z') or number converted to an integer epoch time.
     🎯 [신규] gnc_api_defi.adh_history_kraken 테이블에 데이터를 적재합니다.
     크라켄의 타임스탬프 문자열('2026-06-11T07:01:00.000000Z') 또는 숫자를 정수형 에포크 타임으로 변환하여 저장합니다.
     """
     logger = setup_main_logger()
     try:
+        # 🎯 Place it at the start of the function as you used before,
+        # Safely call db.close_old_connections().
+        # 🎯 예전에 쓰시던 방식 그대로 함수 시작점에 배치하되,
+        # 안전하게 db.close_old_connections()로 호출합니다.
+        db.close_old_connections()
+        # Timestamp parsing (convert to integer if received as a string)
         # 타임스탬프 파싱 (스트링 형태로 올 경우 정수 변환)
         if isinstance(timestamp_raw, str):
+            # Extract timestamp integer (in seconds) after parsing ISO format
             # ISO 포맷 파싱 후 타임스탬프 정수(초 단위) 추출
             dt = datetime.strptime(timestamp_raw.replace("Z", ""), "%Y-%m-%dT%H:%M:%S.%f")
             timestamp_int = int(time.mktime(dt.timetuple()))
         else:
             timestamp_int = int(timestamp_raw)
 
-        # 중복 적재 방지를 위한 유니크 체크 (필요시 활성화)
-        # if ADHHistoryKraken.objects.filter(symbol=symbol, interval=interval, tmestamp=timestamp_int).exists():
-        #     return
-
+        # ⚠️ Mapping fields to schema column names ('tmestamp', 'openPrice', etc.)
         # ⚠️ 스키마 컬럼명에 맞춰 필드 매핑 ('tmestamp', 'openPrice' 등)
         ADHHistoryKraken.objects.create(
             symbol=symbol,
@@ -164,7 +180,8 @@ def insert_candle_to_db(symbol: str, interval: str, timestamp_raw: str, c_open, 
             status="1"
         )
     except Exception as e:
-        logger.error("[DB_INSERT_ERROR] 심볼 %s 적재 실패: %s", symbol, e)
+        logger.error("[DB_INSERT_ERROR] Symbol %s loading failed: %s", symbol, e)
+        #logger.error("[DB_INSERT_ERROR] 심볼 %s 적재 실패: %s", symbol, e)
 
 # ============================================================
 # 🌐 데이터 레이어 구문 (API 및 동기 동기화)
@@ -185,7 +202,8 @@ def get_kraken_xstocks_symbols():
         result_data = response.json()
 
         if result_data.get("error"):
-            logger.error("[%s] 거래소 에러 발생 : %s", current_function_name, result_data['error'])
+            logger.error("[%s] Exchange error occurred : %s", current_function_name, result_data['error'])
+            #logger.error("[%s] 거래소 에러 발생 : %s", current_function_name, result_data['error'])
             return []
 
         pairs = result_data.get("result", {})
@@ -204,23 +222,29 @@ def get_kraken_xstocks_symbols():
         return websocket_symbols, rest_symbols
 
     except Exception as e:
-        logger.error("[%s] ❌ 네트워크 또는 파싱 에러: %s", current_function_name, e)
-        logger.error("[%s] ❌ 상세 에러 로그: %s", current_function_name, traceback.format_exc())
+        logger.error("[%s] ❌ Network or Parsing Error: %s", current_function_name, e)
+        logger.error("[%s] ❌ Detail error log: %s", current_function_name, traceback.format_exc())
+        #logger.error("[%s] ❌ 네트워크 또는 파싱 에러: %s", current_function_name, e)
+        #logger.error("[%s] ❌ 상세 에러 로그: %s", current_function_name, traceback.format_exc())
         return [], []
 
 
 def kraken_xstocks_symbol_sync():
     """
+    [Daily Synchronization Function]
+    Compares pure memory cache and API data at ultra-fast speeds and inserts only missing assets into the database.
     [데일리 동기화 함수]
     순수 메모리 캐시와 API 데이터를 초고속 비교 후 누락 자산만 데이터베이스에 INSERT 합니다.
     """
     current_function_name = inspect.currentframe().f_code.co_name
     logger = setup_main_logger()
-    logger.info("[%s] 데일리 자산 동기화 비교를 개시합니다.", current_function_name)
+    logger.info("[%s] Initiating daily asset synchronization comparison.", current_function_name)
+    #logger.info("[%s] 데일리 자산 동기화 비교를 개시합니다.", current_function_name)
 
     ws_list, rest_list = get_kraken_xstocks_symbols()
     if not ws_list:
-        logger.warning("[%s] API 수신 데이터가 없어 배치를 건너뜁니다.", current_function_name)
+        logger.warning("[%s] API Skip batch because no data is received.", current_function_name)
+        #logger.warning("[%s] API 수신 데이터가 없어 배치를 건너뜁니다.", current_function_name)
         return
 
     XStocksCache.initialize(logger)
@@ -228,7 +252,8 @@ def kraken_xstocks_symbol_sync():
     try:
         atm_service = ATMService.objects.get(service_cd='SPOTAUTO')
     except (ATMService.DoesNotExist, ATMService.MultipleObjectsReturned) as e:
-        logger.error("[%s] 'SPOTAUTO' 서비스 엔티티 예외 발생으로 처리를 중단합니다: %s", current_function_name, e)
+        logger.error("[%s] 'SPOTAUTO' Stop processing due to a service entity exception: %s", current_function_name, e)
+        #logger.error("[%s] 'SPOTAUTO' 서비스 엔티티 예외 발생으로 처리를 중단합니다: %s", current_function_name, e)
         return
 
     new_inserted_count = 0
@@ -247,13 +272,16 @@ def kraken_xstocks_symbol_sync():
                 )
                 XStocksCache.add_symbol(ws)
                 new_inserted_count += 1
-                logger.info("[%s] 🆕 신규 주식 자산 적재 완료 -> %s (%s)", current_function_name, ws, rest)
+                logger.info("[%s] 🆕 New stock asset loading complete -> %s (%s)", current_function_name, ws, rest)
+                #logger.info("[%s] 🆕 신규 주식 자산 적재 완료 -> %s (%s)", current_function_name, ws, rest)
         except Exception as ex:
-            logger.error("[%s] %s 생성 중 DB 처리 실패: %s", current_function_name, ws, ex)
+            logger.error("[%s] %s DB processing failed during creation: %s", current_function_name, ws, ex)
+            #logger.error("[%s] %s 생성 중 DB 처리 실패: %s", current_function_name, ws, ex)
 
-    logger.info("[%s] 데일리 자산 배치 동기화 종료 (신규 반영 건수: %d 건)", current_function_name, new_inserted_count)
+    logger.info("[%s] Daily asset placement synchronization ended (Number of newly reflected items: %d)", current_function_name, new_inserted_count)
+    #logger.info("[%s] 데일리 자산 배치 동기화 종료 (신규 반영 건수: %d 건)", current_function_name, new_inserted_count)
 
-
+'''
 # ============================================================
 # 🕒 비동기 데몬 제어 루프 파트
 # ============================================================
@@ -281,39 +309,82 @@ async def daily_batch_daemon_loop():
 
         logger.info("⏰ 정각 스케줄 타임 도달. Kraken API 검사를 재개합니다.")
         await loop.run_in_executor(None, kraken_xstocks_symbol_sync)
+'''
+def daily_batch_daemon_loop_thread():
+    """
+    🎯 [Thread-Isolated Version] Completely separated from the WebSocket main loop
+    It is a thread loop that runs independently at 5 AM every day.
+    🎯 [스레드 격리 버전] 웹소켓 메인 루프와 완벽히 분리되어 
+    매일 새벽 5시에 단독으로 도는 스레드 루프입니다.
+    """
+    logger = setup_main_logger()
+    logger.info("🚀 The daily asset placement daemon has been isolated and loaded as an independent thread.")
+    #logger.info("🚀 데일리 자산 배치 데몬이 독립 스레드(Thread)로 격리 적재되었습니다.")
+    
+    # 최초 1회 실행
+    kraken_xstocks_symbol_sync()
 
+    while True:
+        now = datetime.now()
+        next_run = now.replace(hour=5, minute=0, second=0, microsecond=0)
+        if now >= next_run:
+            next_run += timedelta(days=1)
+            
+        sleep_seconds = (next_run - now).total_seconds()
+        logger.info("💤 Entering standby mode for next new listing investigation batch: [%d seconds remaining] (Target time: %s)", int(sleep_seconds), next_run)
+        #logger.info("💤 다음 신규 상장 조사 배치까지 대기 모드 진입: [%d초 남음] (목표 시간: %s)", int(sleep_seconds), next_run)
+        
+        # Waiting with thread sleep instead of asynchronous sleep
+        # 비동기 슬립이 아닌 스레드 슬립으로 대기
+        time.sleep(sleep_seconds)
+        
+        logger.info("⏰ Scheduled time reached on time. Resumes Kraken API check in an independent thread.")
+        #logger.info("⏰ 정각 스케줄 타임 도달. 독립 스레드에서 Kraken API 검사를 재개합니다.")
+        try:
+            kraken_xstocks_symbol_sync()
+        except Exception as e:
+            logger.error("[Daily batch thread error] -> %s", e)
+            #logger.error("[데일리 배치 스레드 에러] -> %s", e)
 
 async def receive_websocket_ohlc_engine():
     """
+    [Real-time 1-Minute Chart Collection Engine - Complete Version]
+    Detects no trading activity during off-market hours and forcibly outputs the last data from memory every minute.
     [실시간 1분봉 수집 엔진 - 완전판]
     장외 시간 무거래 상태를 감지하여 1분마다 메모리 상의 직전 최종 데이터를 강제 출력합니다.
     """
     current_function_name = inspect.currentframe().f_code.co_name
     logger = setup_main_logger()
-    logger.info("📡 [%s] 실시간 1분봉 수집 파이프라인 가동 개시.", current_function_name)
+    logger.info("📡 [%s] Real-time 1-minute chart collection pipeline launched.", current_function_name)
+    #logger.info("📡 [%s] 실시간 1분봉 수집 파이프라인 가동 개시.", current_function_name)
 
     import websockets
 
+    # 1. Initial query of the list of stocks to be collected (auto_flag=1) from the DB and build status sets
     # 1. DB에서 수집 대상(auto_flag=1) 주식 목록 최초 조회 및 상태 세트 빌드
     active_pairs = await get_active_kraken_symbols()
     currently_subscribed = {pair[0] for pair in active_pairs}
 
     if not currently_subscribed:
-        logger.warning("[%s] ⚠️ DB에 수집 활성화(auto_flag=1)된 자산이 없습니다. 30초 후 재시도합니다.", current_function_name)
+        logger.warning("[%s] ⚠️ There are no assets with collection enabled (auto_flag=1) in the DB. Retrying in 30 seconds.", current_function_name)
+        #logger.warning("[%s] ⚠️ DB에 수집 활성화(auto_flag=1)된 자산이 없습니다. 30초 후 재시도합니다.", current_function_name)
         await asyncio.sleep(30)
         return
 
-    logger.info("[%s] 🔥 총 %d 개의 자산 최초 감시 시작.", current_function_name, len(currently_subscribed))
+    logger.info("[%s] 🔥 Start initial monitoring of a total of %d assets.", current_function_name, len(currently_subscribed))
+    #logger.info("[%s] 🔥 총 %d 개의 자산 최초 감시 시작.", current_function_name, len(currently_subscribed))
 
     ws_url = "wss://ws.kraken.com/v2"
     last_db_check_time = time.time()
 
+    # 🎯 [After-hours Management] Local memory storage to keep the previous final candle data for each symbol
     # 🎯 [장외 시간 대응] 각 심볼별 직전 최종 캔들 데이터를 보관할 로컬 메모리 저장소
     last_candles = {}
 
     try:
         async with websockets.connect(ws_url) as websocket:
-            logger.info("[%s] 🤝 Kraken WebSocket 서버와 핸드셰이크 성공.", current_function_name)
+            logger.info("[%s] 🤝 Handshake with Kraken WebSocket server successful.", current_function_name)
+            #logger.info("[%s] 🤝 Kraken WebSocket 서버와 핸드셰이크 성공.", current_function_name)
 
             # --------------------------------============================
             # 🎯 [알고리즘 1] 최초 구독 시 청크 리스트 균등 분할 매커니즘 작동
@@ -334,18 +405,22 @@ async def receive_websocket_ohlc_engine():
                 }
 
                 await websocket.send(json.dumps(subscribe_message))
-                logger.info("[%s] ✉️ [최초 균등 분할 구독] %d/%d 그룹 (%d개 발송): %s", current_function_name, i + 1, num_chunks, len(chunk_symbols), chunk_symbols)
+                logger.info("[%s] ✉️ [Initial equal split subscription] %d/%d group (%d items sent): %s", current_function_name, i + 1, num_chunks, len(chunk_symbols), chunk_symbols)
+                #logger.info("[%s] ✉️ [최초 균등 분할 구독] %d/%d 그룹 (%d개 발송): %s", current_function_name, i + 1, num_chunks, len(chunk_symbols), chunk_symbols)
                 await asyncio.sleep(0.1)
 
+            # 🎯 Add variable for time control
             # 🎯 시간 제어를 위한 변수 추가
             last_candles = {}
-            last_print_time = time.time()  # 마지막으로 화면에 출력한 시간 트래킹
+            last_print_time = time.time()  # Last time tracking displayed on the screen, 마지막으로 화면에 출력한 시간 트래킹
 
             # --------------------------------============================
+            # 🔄 Real-time reception and runtime dynamic control internal infinite loop
             # 🔄 실시간 수신 및 런타임 동적 제어 내부 무한 루프
             # --------------------------------============================
             while True:
                 try:
+                    # 🎯 The timeout is set to 60 seconds (1 minute), so a TimeoutError occurs every minute if transaction data is interrupted.
                     # 🎯 타임아웃을 60초(1분)로 조율하여 거래 데이터가 끊기면 1분마다 TimeoutError 발생
                     #raw_response = await asyncio.wait_for(websocket.recv(), timeout=60.0)
                     raw_response = await asyncio.wait_for(websocket.recv(), timeout=2.0)
@@ -353,9 +428,11 @@ async def receive_websocket_ohlc_engine():
 
                     if "event" in data or "status" in data:
 #                        if data.get("method") == "subscribe" and data.get("success") is True:
+#                            logger.info("[%s] ✅ Split channel subscription successfully approved.", current_function_name)
 #                            logger.info("[%s] ✅ 분할 채널 구독 정상 승인 완료.", current_function_name)
                         continue
 
+                    # Precise real-time parsing unit for actual 1-minute candlestick data packets
                     # 실제 1분봉 데이터 패킷 정밀 실시간 파싱부
                     if "channel" in data and data["channel"] == "ohlc":
                         candle_data_list = data.get("data", [])
@@ -369,23 +446,21 @@ async def receive_websocket_ohlc_engine():
                             c_volume = candle.get("volume")
                             c_timestamp = candle.get("timestamp")
                             
+                            # 🎯 [Memory Update] Updates the memory cache when the latest data packet is received
                             # 🎯 [메모리 업데이트] 최신 데이터 패킷이 수신되면 메모리 캐시 갱신
                             last_candles[symbol] = {
                                 "timestamp": c_timestamp,
                                 "open": c_open, "high": c_high, "low": c_low, "close": c_close, "volume": c_volume
                             }
 
-                            logger.info(
-                                "📈 [실시간 수신] %s | UTC: %s | O:%s H:%s L:%s C:%s | V:%s",
-                                symbol, c_timestamp, c_open, c_high, c_low, c_close, c_volume
-                            )
+                            logger.info("📈 [Real-time reception] %s | UTC: %s | O:%s H:%s L:%s C:%s | V:%s", symbol, c_timestamp, c_open, c_high, c_low, c_close, c_volume)
+                            #logger.info("📈 [실시간 수신] %s | UTC: %s | O:%s H:%s L:%s C:%s | V:%s", symbol, c_timestamp, c_open, c_high, c_low, c_close, c_volume)
 
+                            # 2. 🎯 [Real-time DB Load] Asynchronously and securely INSERT immediately upon receipt
                             # 2. 🎯 [실시간 DB 적재] 수신 즉시 비동기 안전하게 INSERT
-                            await insert_candle_to_db(
-                                symbol=symbol, interval="1m", timestamp_raw=c_timestamp,
-                                c_open=c_open, c_high=c_high, c_low=c_low, c_close=c_close, c_volume=c_volume
-                            )
+                            await insert_candle_to_db(symbol=symbol, interval="1m", timestamp_raw=c_timestamp, c_open=c_open, c_high=c_high, c_low=c_low, c_close=c_close, c_volume=c_volume)
                 except asyncio.TimeoutError:
+                    # 🎯 [Forced Output of Off-Market Times] Operates if there is no exchange data for 1 minute
                     # 🎯 [장외 시간대 강제 출력 처리] 1분 동안 거래소 데이터가 없으면 작동
 #                    current_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     
@@ -402,45 +477,54 @@ async def receive_websocket_ohlc_engine():
 #                            )
                     pass
 
+                # 🎯 [Key Change] Always executes after 60 seconds based on my clock, regardless of exchange data availability.
                 # 🎯 [핵심 변경점] 거래소 데이터 유무와 상관없이, 내 시계 기준으로 60초가 지나면 무조건 실행
                 if time.time() - last_print_time >= 60.0:
                     current_time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
                     if not last_candles:
-                        logger.info("💤 [장외 모니터링] %s - 아직 수신된 최초 데이터가 없습니다.", current_time_str)
+                        logger.info("💤 [Off-market Monitoring] %s - No initial data received yet.", current_time_str)
+                        #logger.info("💤 [장외 모니터링] %s - 아직 수신된 최초 데이터가 없습니다.", current_time_str)
                     else:
-                        logger.info("💤 [장외 모니터링] %s - [1분 주기 현재 캐시 현황 출력]", current_time_str)
+                        logger.info("💤 [Off-market Monitoring] %s - [Output current cache status at 1-minute intervals]", current_time_str)
+                        #logger.info("💤 [장외 모니터링] %s - [1분 주기 현재 캐시 현황 출력]", current_time_str)
                         for symbol, c in last_candles.items():
+                            # For over-the-counter virtual minute charts, it is consistent to treat the trading volume as zero.
                             # 장외 가상 분봉은 거래량을 0으로 처리하는 것이 정합성에 맞습니다.
                             virtual_volume = 0
+                            # Since the time is currently at the point where a 1-minute cycle has elapsed, it is processed as the epoch time of the current time.
                             # 시간은 현재 1분 주기가 흐른 시점이므로 현재 시각의 에포크 타임으로 가공
                             virtual_timestamp = int(time.time())
-                            logger.info(
-                                "💤 [장외유지] %s | 최종수신UTC: %s | O:%s H:%s L:%s C:%s | V:%s",
-                                symbol, virtual_timestamp, c["open"], c["high"], c["low"], c["close"], virtual_volume
-                            )
+                            logger.info("💤 [Over-the-counter] %s | Final Received UTC: %s | O:%s H:%s L:%s C:%s | V:%s", symbol, virtual_timestamp, c["open"], c["high"], c["low"], c["close"], virtual_volume)
+                            #logger.info("💤 [장외유지] %s | 최종수신UTC: %s | O:%s H:%s L:%s C:%s | V:%s", symbol, virtual_timestamp, c["open"], c["high"], c["low"], c["close"], virtual_volume)
 
+                            # 3. 🎯 [Loading OTC Virtual Candle DB] Loading extension lines based on previous closing price data
                             # 3. 🎯 [장외 가상 캔들 DB 적재] 직전 종가 데이터 기반 연장선 적재
                             await insert_candle_to_db(
                                 symbol=symbol, interval="1m", timestamp_raw=virtual_timestamp,
                                 c_open=c["open"], c_high=c["high"], c_low=c["low"], c_close=c["close"], c_volume=virtual_volume
                             )
 
+                    # Update output time
                     # 출력 시간 갱신
                     last_print_time = time.time()
 
                 # --------------------------------============================
+                # 🎯 [Algorithm 2] Dynamic DB scan every 10 minutes followed by real-time subscription adjustment processing
                 # 🎯 [알고리즘 2] 10분마다 DB 유동 스캔 후 실시간 구독 조정 처리
                 # --------------------------------============================
                 if time.time() - last_db_check_time > 600:
-                    logger.info("[%s] 🔍 auto_flag 실시간 변동 내역 모니터링 중...", current_function_name)
+                    logger.info("[%s] 🔍 auto_flag Monitoring real-time change history...", current_function_name)
+                    #logger.info("[%s] 🔍 auto_flag 실시간 변동 내역 모니터링 중...", current_function_name)
                     latest_pairs = await get_active_kraken_symbols()
                     latest_symbols = {pair[0] for pair in latest_pairs}
 
+                    # A. Additional subscription after detecting assets newly input as 1
                     # A. 새로 1로 투입된 자산 검출 후 추가 구독
                     symbols_to_add = latest_symbols - currently_subscribed
                     if symbols_to_add:
-                        logger.info("🆕 [동적 추가 신호] 종목 구독 추가: %s", symbols_to_add)
+                        logger.info("🆕 [Dynamic Additional Signals] Add Stock Subscription: %s", symbols_to_add)
+                        #logger.info("🆕 [동적 추가 신호] 종목 구독 추가: %s", symbols_to_add)
                         add_message = {
                             "method": "subscribe",
                             "params": {"channel": "ohlc", "interval": 1, "symbol": list(symbols_to_add)},
@@ -449,10 +533,12 @@ async def receive_websocket_ohlc_engine():
                         await websocket.send(json.dumps(add_message))
                         currently_subscribed.update(symbols_to_add)
 
+                    # B. Withdrawal of subscription after detecting assets excluded as 0 in the interim
                     # B. 중간에 0으로 제외된 자산 검출 후 구독 철회
                     symbols_to_remove = currently_subscribed - latest_symbols
                     if symbols_to_remove:
-                        logger.info("🚫 [동적 제거 신호] 자산 감시 제외 (구독 해제): %s", symbols_to_remove)
+                        logger.info("🚫 [Dynamic Removal Signal] Exclude Asset Monitoring (Unsubscribe): %s", symbols_to_remove)
+                        #logger.info("🚫 [동적 제거 신호] 자산 감시 제외 (구독 해제): %s", symbols_to_remove)
                         remove_message = {
                             "method": "unsubscribe",
                             "params": {"channel": "ohlc", "interval": 1, "symbol": list(symbols_to_remove)},
@@ -461,6 +547,7 @@ async def receive_websocket_ohlc_engine():
                         await websocket.send(json.dumps(remove_message))
                         currently_subscribed -= symbols_to_remove
                         
+                        # Symbols excluded from subscriptions are also cleared from memory in the off-site output repository.
                         # 구독에서 제외된 심볼은 장외 출력 보관소에서도 메모리 정리
                         for sym in symbols_to_remove:
                             last_candles.pop(sym, None)
@@ -468,21 +555,27 @@ async def receive_websocket_ohlc_engine():
                     last_db_check_time = time.time()
 
     except websockets.exceptions.ConnectionClosed as cc:
-        logger.error("[%s] ❌ 웹소켓 커넥션이 종료되었습니다: %s", current_function_name, cc)
+        logger.error("[%s] ❌ The WebSocket connection has been closed: %s", current_function_name, cc)
+        #logger.error("[%s] ❌ 웹소켓 커넥션이 종료되었습니다: %s", current_function_name, cc)
     except Exception as e:
-        logger.error("[%s] ❌ 엔진 메인 핸들러 예외 발생: %s", current_function_name, e)
-        logger.error("[%s] ❌ 상세 예외 트레이스: %s", current_function_name, traceback.format_exc())
+        logger.error("[%s] ❌ Engine main handler exception occurred: %s", current_function_name, e)
+        logger.error("[%s] ❌ Detailed exception trace: %s", current_function_name, traceback.format_exc())
+        #logger.error("[%s] ❌ 엔진 메인 핸들러 예외 발생: %s", current_function_name, e)
+        #logger.error("[%s] ❌ 상세 예외 트레이스: %s", current_function_name, traceback.format_exc())
     
-    logger.warning("[%s] 파이프라인 마감 세션 도달. 비동기 소켓 리커버리 모드로 진입합니다.", current_function_name)
+    logger.warning("[%s] Pipeline close session reached. Entering asynchronous socket recovery mode.", current_function_name)
+    #logger.warning("[%s] 파이프라인 마감 세션 도달. 비동기 소켓 리커버리 모드로 진입합니다.", current_function_name)
     await asyncio.sleep(5)
 
 
 # ============================================================
+# 🛑 Process Signal and Lifecycle Management
 # 🛑 프로세스 시그널 및 라이프사이클 관리
 # ============================================================
 def graceful_shutdown_async(loop):
     logger = setup_main_logger()
-    logger.info("🚨 [Signal] 종료 시그널 수신 완료. 비동기 태스크 자원을 안전하게 회수합니다.")
+    logger.info("🚨 [Signal] Received termination signal. Safely reclaiming asynchronous task resources.")
+    #logger.info("🚨 [Signal] 종료 시그널 수신 완료. 비동기 태스크 자원을 안전하게 회수합니다.")
     
     for task in asyncio.all_tasks(loop=loop):
         task.cancel()
@@ -495,6 +588,7 @@ def graceful_shutdown_async(loop):
 # 🚀 비동기 메인 엔트리 포인트
 # ============================================================
 async def main():
+    '''
     async def websocket_supervisor():
         while True:
             await receive_websocket_ohlc_engine()
@@ -504,11 +598,30 @@ async def main():
         daily_batch_daemon_loop(),
         websocket_supervisor()
     )
+    '''
+    while True:
+        try:
+            await receive_websocket_ohlc_engine()
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            logger = setup_main_logger()
+            logger.error("[main_supervisor] WebSocket engine exception detection recovery attempt: %s", e)
+            #logger.error("[main_supervisor] 웹소켓 엔진 예외 감지 복구 시도: %s", e)
+        await asyncio.sleep(5)
 
 if __name__ == "__main__":
     logger = setup_main_logger()
-    logger.info("🏁 Kraken xStocks 통합 관리 데몬 부팅 완료.")
+    logger.info("🏁 Kraken xStocks Integrated Management Daemon Boot Complete.")
+    #logger.info("🏁 Kraken xStocks 통합 관리 데몬 부팅 완료.")
 
+    # 🎯 [Key Point] Move the daily asset synchronization loop outside the main asynchronous loop and run it as a thread
+    # 🎯 [핵심] 데일리 자산 동기화 루프를 메인 비동기 루프 밖으로 탈출시켜 스레드로 구동
+    batch_thread = threading.Thread(target=daily_batch_daemon_loop_thread, daemon=True)
+    batch_thread.start()
+
+    # Start main asynchronous loop (WebSockets only)
+    # 메인 비동기 루프 가동 (오직 웹소켓 전용)
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
@@ -522,8 +635,6 @@ if __name__ == "__main__":
         loop.run_until_complete(main())
     except asyncio.CancelledError:
         pass
-    except KeyboardInterrupt:
-        logger.info("KeyboardInterrupt detected.")
     finally:
         loop.close()
         logger.info("🔒 Loop securely closed. Daemon process safely exited.")
