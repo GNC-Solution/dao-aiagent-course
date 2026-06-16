@@ -422,6 +422,10 @@ async def receive_websocket_ohlc_engine():
             last_candles = {}
             last_print_time = time.time()  # Last time tracking displayed on the screen, 마지막으로 화면에 출력한 시간 트래킹
 
+            # Record the "minute in which the most recent out-of-bounds processing was completed" for sorting by 00 seconds.
+            # 00초 기준 정렬을 위해 "가장 최근에 장외 처리를 완료한 분(minute)"을 기록
+            last_processed_minute = -1
+
             # --------------------------------============================
             # 🔄 Real-time reception and runtime dynamic control internal infinite loop
             # 🔄 실시간 수신 및 런타임 동적 제어 내부 무한 루프
@@ -485,6 +489,7 @@ async def receive_websocket_ohlc_engine():
 #                            )
                     pass
 
+                '''
                 # 🎯 [Key Change] Always executes after 60 seconds based on my clock, regardless of exchange data availability.
                 # 🎯 [핵심 변경점] 거래소 데이터 유무와 상관없이, 내 시계 기준으로 60초가 지나면 무조건 실행
                 if time.time() - last_print_time >= 60.0:
@@ -516,6 +521,46 @@ async def receive_websocket_ohlc_engine():
                     # Update output time
                     # 출력 시간 갱신
                     last_print_time = time.time()
+                '''
+
+                # --------------------------------============================
+                # 🎯 [Off-site Response Correction] If 5 seconds have passed every minute and there is no data for the current minute, load at the top of the hour (00 seconds).
+                # 🎯 [장외대응 교정] 매 분 5초가 지났는데 이번 분 데이터가 없으면 정각(00초)으로 적재
+                # --------------------------------============================
+                now = datetime.now()
+
+                # 1. It is after 5 seconds of every minute and
+                # 2. If an out-of-bounds forced load has not yet been performed in this minute (now.minute)
+                # 1. 매 분 5초 이후 시점이고
+                # 2. 이번 분(now.minute)에 아직 장외 강제 적재를 수행하지 않았다면
+                if now.second >= 5 and now.minute != last_processed_minute:
+
+                    if not last_candles:
+                        # If no data has come in yet, mark this batch as processed and skip.
+                        # 아직 데이터가 한 번도 안 들어왔다면 이번 분 처리는 한 것으로 마킹하고 스킵
+                        last_processed_minute = now.minute
+                    else:
+                        # 🎯 For time consistency, the virtual timestamp is precisely set to '00 seconds of the current minute'.
+                        # 🎯 시간 정합성을 위해 가상 타임스탬프를 '현재 분의 00초'로 칼같이 맞춥니다.
+                        virtual_dt = now.replace(second=0, microsecond=0)
+                        virtual_timestamp = int(time.mktime(virtual_dt.timetuple()))
+
+                        logger.info("💤 [OTC Monitoring] %s - 5 seconds of no trading. Loading for OTC holding started on the hour (00 seconds)", virtual_dt.strftime("%Y-%m-%d %H:%M:%S"))
+                        #logger.info("💤 [장외 모니터링] %s - 5초간 무거래 정체. 정각(00초) 기준 장외유지 적재 개시", virtual_dt.strftime("%Y-%m-%d %H:%M:%S"))
+
+                        for symbol, c in last_candles.items():
+                            virtual_volume = 0
+
+                            logger.info("💤 [OP Maintenance Copy] %s | On-time Load TS: %s | O:%s H:%s L:%s C:%s | V:%s", symbol, virtual_timestamp, c["open"], c["high"], c["low"], c["close"], virtual_volume)
+                            #logger.info("💤 [장외유지 복사] %s | 정각적재TS: %s | O:%s H:%s L:%s C:%s | V:%s", symbol, virtual_timestamp, c["open"], c["high"], c["low"], c["close"], virtual_volume)
+
+                            # It is loaded into the DB with an exact 00-second timestamp.
+                            # DB에 정확히 00초 타임스탬프로 적재됩니다.
+                            await insert_candle_to_db(symbol=symbol, interval="1m", timestamp_raw=virtual_timestamp, c_open=c["open"], c_high=c["high"], c_low=c["low"], c_close=c["close"], c_volume=virtual_volume)
+
+                        # 💥 Prevent duplicate execution: Mark this quarter's processing as complete
+                        # 💥 중복 실행 방지: 이번 분기 처리 완료 마킹
+                        last_processed_minute = now.minute
 
                 # --------------------------------============================
                 # 🎯 [Algorithm 2] Dynamic DB scan every 10 minutes followed by real-time subscription adjustment processing
