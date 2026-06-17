@@ -162,3 +162,6 @@ https://discuss.pytorch.kr/t/gemma-4-pi-coding-agent-feat-lm-studio/10009
 https://memoryhub.tistory.com/entry/%F0%9F%A7%A9-Pi-Agent-Claude-Code-%EB%8C%80%EC%95%88%EC%9D%B4-%EB%90%A0%EA%B9%8C-%EC%9E%A5%EB%8B%A8%EC%A0%90%EA%B3%BC-%EC%B6%94%EC%B2%9C-%ED%99%95%EC%9E%A5-10%EA%B0%80%EC%A7%80
 <br><br><br>
 
+### 주 3천만 토큰 쓰면서 배운 오픈클로 꿀팁 6가지
+https://www.gpters.org/dev/post/6-openclaw-tips-learned-jEGa2tqVHrhKqXg
+<br><br><br>
