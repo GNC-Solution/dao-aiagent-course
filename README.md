@@ -173,3 +173,7 @@ https://medium.com/@dndb3599/openclaw%EB%A5%BC-%EB%9C%AF%EC%96%B4%EB%B3%B4%EA%B3
 ### GPT가 자꾸 거짓말한다면? NotebookLM으로 '자료 보고 답하게' 시키기
 https://bbojjak-viewer.vercel.app/basics/notebooklm
 <br><br><br>
+
+### 🎓 뽀짝이의 OpenClaw 수업
+https://bbojjak-viewer.vercel.app/lessons
+<br><br><br>
