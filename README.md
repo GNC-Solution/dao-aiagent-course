@@ -5,7 +5,7 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 
 
 ## AI에이전트의 시대입니다. 중요하고 수익이 발생하는 일들을 에이전트로 전환하세요. 
-## 지금 당장. 하지 많으면 도태 됩니다.
+## 하지 많으면 경쟁력이 약해지고 점점 도태 됩니다. 지금 시작하세요.
 
 ### Note
 • 개인은 몇 개의 에이전트를 데라고 살아가게 됩니다<br>
