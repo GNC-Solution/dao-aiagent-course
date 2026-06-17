@@ -165,3 +165,7 @@ https://memoryhub.tistory.com/entry/%F0%9F%A7%A9-Pi-Agent-Claude-Code-%EB%8C%80%
 ### 주 3천만 토큰 쓰면서 배운 오픈클로 꿀팁 6가지
 https://www.gpters.org/dev/post/6-openclaw-tips-learned-jEGa2tqVHrhKqXg
 <br><br><br>
+
+### OpenClaw를 뜯어보고, 홈서버에 24/7 AI 에이전트를 올린 이야기
+https://medium.com/@dndb3599/openclaw%EB%A5%BC-%EB%9C%AF%EC%96%B4%EB%B3%B4%EA%B3%A0-%ED%99%88%EC%84%9C%EB%B2%84%EC%97%90-24-7-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EC%98%AC%EB%A6%B0-%EC%9D%B4%EC%95%BC%EA%B8%B0-1ba281919e23
+<br><br><br>
