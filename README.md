@@ -31,8 +31,11 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 
 • Hermes Agent (https://hermes-agent.nousresearch.com/docs)
 
-• NanoClaw - Secure AI Agent for WhatsApp, Telegram & More (https://nanoclaw.dev/)  <br><br><br>
+• NanoClaw - Secure AI Agent for WhatsApp, Telegram & More (https://nanoclaw.dev/)  
 
+• Pi: Infusing a Coding Agent with Unix Philosophy (https://wikidocs.net/blog/@jaehong/12583/) 
+
+<br><br><br>
 
 
 ### 경험
@@ -135,3 +138,12 @@ https://www.youtube.com/watch?v=8r8xE-UmLTY
 ### Hermes Agent: 성장하는 AI 에이전트 실전 가이드
 https://wikidocs.net/book/19414
 <br><br><br>
+
+### Gemma 4와 Pi Coding Agent로 완전히 로컬에서 실행하는 코딩 에이전트 만들기 (feat. LM Studio)
+https://discuss.pytorch.kr/t/gemma-4-pi-coding-agent-feat-lm-studio/10009
+<br><br><br>
+
+### 🧩 Pi Agent, Claude Code 대안이 될까? 장단점과 추천 확장 10가지
+https://memoryhub.tistory.com/entry/%F0%9F%A7%A9-Pi-Agent-Claude-Code-%EB%8C%80%EC%95%88%EC%9D%B4-%EB%90%A0%EA%B9%8C-%EC%9E%A5%EB%8B%A8%EC%A0%90%EA%B3%BC-%EC%B6%94%EC%B2%9C-%ED%99%95%EC%9E%A5-10%EA%B0%80%EC%A7%80
+<br><br><br>
+
