@@ -169,3 +169,7 @@ https://www.gpters.org/dev/post/6-openclaw-tips-learned-jEGa2tqVHrhKqXg
 ### OpenClaw를 뜯어보고, 홈서버에 24/7 AI 에이전트를 올린 이야기
 https://medium.com/@dndb3599/openclaw%EB%A5%BC-%EB%9C%AF%EC%96%B4%EB%B3%B4%EA%B3%A0-%ED%99%88%EC%84%9C%EB%B2%84%EC%97%90-24-7-ai-%EC%97%90%EC%9D%B4%EC%A0%84%ED%8A%B8%EB%A5%BC-%EC%98%AC%EB%A6%B0-%EC%9D%B4%EC%95%BC%EA%B8%B0-1ba281919e23
 <br><br><br>
+
+### GPT가 자꾸 거짓말한다면? NotebookLM으로 '자료 보고 답하게' 시키기
+https://bbojjak-viewer.vercel.app/basics/notebooklm
+<br><br><br>
