@@ -24,6 +24,7 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 • OpenClaw 튜토리얼 공식문서 (https://docs.openclaw.ai/)
 
 • Claude Code 사용법 공식문서 (https://code.claude.com/docs) 
+• Claude Code : 터미널 환경에서 자연어로 코딩과 리팩토링을 수행하는 AI 코딩 어시스턴트 (https://claude.com/)
 
 • Genspark AI workspace (https://www.genspark.ai/blog/genspark-ai-workspace-4)
 
@@ -34,6 +35,20 @@ https://drive.google.com/file/d/1jMKx-ZXJRi0xhuIErE83KyFfXkUV232Z/view?usp=drive
 • NanoClaw - Secure AI Agent for WhatsApp, Telegram & More (https://nanoclaw.dev/)  
 
 • Pi: Infusing a Coding Agent with Unix Philosophy (https://wikidocs.net/blog/@jaehong/12583/) 
+
+• Manus : 웹 탐색부터 자료 수집·분석·제작까지 자동 수행해 실제 산출물을 완성하는 AI 에이전트 플 (https://manus.im/?index=1)
+
+• Genspark : 문서·슬라이드·시트·코드·디자인 초안까지 에이전트가 단계별로 계획·실행하는 통합 AI 작업 (https://www.genspark.ai/)
+
+• Codex : 자연어를 코드로 변환하는 OpenAI 기반 코드 특화 AI 에이전트 (https://chatgpt.com/ko-KR/codex/)
+
+• Google Antigravity : 에이전트가 실행·테스트까지 수행하는 작업 위임형 개발 플랫폼 (https://antigravity.google/)
+
+• Claude Cowork : 결과물 단위로 업무를 맡기는 비개발자용 AI 에이전트 (https://www.anthropic.com/product/claude-cowork)
+
+• OpenHuman : 로컬 메모리로 나를 기억하는 오픈소스 개인 AI 에이전트 (https://www.producthunt.com/products/openhuman)
+
+• Gemini Spark : 구글 워크스페이스와 연동되는 개인 AI 에이전트 (https://gemini.google/overview/agent/spark/)
 
 <br><br><br>
 
