@@ -177,3 +177,7 @@ https://bbojjak-viewer.vercel.app/basics/notebooklm
 ### 🎓 뽀짝이의 OpenClaw 수업
 https://bbojjak-viewer.vercel.app/lessons
 <br><br><br>
+
+### OpenClaw 크론 tools 플래그 적용으로 토큰 절약과 보안, 두 마리 토끼 잡기
+https://bongman.tistory.com/1387
+<br><br><br>
