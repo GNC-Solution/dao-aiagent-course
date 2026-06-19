@@ -185,3 +185,7 @@ https://bongman.tistory.com/1387
 ### Hermes & Openclaw 등
 https://www.ququ123.top/en/categories/openclaw-series/
 <br><br><br>
+
+### OpenClaw vs Hermes
+https://brunch.co.kr/@abrahamsong/170
+<br><br><br>
